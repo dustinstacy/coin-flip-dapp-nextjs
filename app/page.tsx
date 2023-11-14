@@ -1,11 +1,12 @@
 'use client'
 
 import { ethers } from 'ethers'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 export default function Home() {
     const [isConnected, setIsConnected] = useState(false)
     const [hasMetamask, setHasMetamask] = useState(false)
+    const [wager, setWager] = useState(0.1)
 
     let provider
     let signer = null
@@ -27,6 +28,13 @@ export default function Home() {
         }
     }
 
+    const handleWagerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target
+        setWager(Number(value))
+    }
+
+    const placeWager = (entrantsGuess: Number, entrantsWager: Number) => {}
+
     useEffect(() => {
         if (typeof window.ethereum !== 'undefined') {
             setHasMetamask(true)
@@ -47,9 +55,18 @@ export default function Home() {
                     'Please install metamask'
                 )}
             </div>
+            <input
+                className='text-black text-center w-[50px]'
+                type='number'
+                step={0.1}
+                min={0.1}
+                max={5.0}
+                value={wager.toFixed(1)}
+                onChange={handleWagerChange}
+            />
             <div className='w-1/4 flex justify-between'>
-                <button>Heads</button>
-                <button>Tails</button>
+                <button onClick={() => placeWager(0, wager)}>Heads</button>
+                <button onClick={() => placeWager(1, wager)}>Tails</button>
             </div>
         </main>
     )
