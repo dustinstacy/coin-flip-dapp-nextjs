@@ -2,6 +2,7 @@
 
 import { ethers } from 'ethers'
 import React, { useEffect, useState } from 'react'
+import { abi } from '@constants'
 
 export default function Home() {
     const [isConnected, setIsConnected] = useState(false)
