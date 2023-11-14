@@ -2,15 +2,27 @@
 
 import { ethers } from 'ethers'
 import React, { useEffect, useState } from 'react'
-import { abi } from '@constants'
+import { abi, contractAddresses } from '@constants'
+import { Network } from 'ethers'
+import { BrowserProvider } from 'ethers'
+import { Signer } from 'ethers'
+import { AddressLike } from 'ethers'
+
+interface ContractAddresses {
+    [chainId: number]: string[]
+}
 
 export default function Home() {
     const [isConnected, setIsConnected] = useState(false)
     const [hasMetamask, setHasMetamask] = useState(false)
     const [wager, setWager] = useState(0.1)
 
-    let provider
-    let signer = null
+    let provider: BrowserProvider
+    let signer: Signer
+    let chainId: bigint
+    let contractAddress: string | undefined
+
+    const addressArray: ContractAddresses = contractAddresses
 
     const connectWallet = async () => {
         const { ethereum } = window
@@ -21,6 +33,11 @@ export default function Home() {
                 setIsConnected(true)
                 provider = new ethers.BrowserProvider(ethereum)
                 signer = await provider.getSigner()
+                chainId = (await provider.getNetwork()).chainId
+                contractAddress = addressArray[Number(chainId)]
+                    ? addressArray[Number(chainId)][0]
+                    : undefined
+                console.log(provider, signer, chainId, contractAddress)
             } catch (e) {
                 console.log(e)
             }
