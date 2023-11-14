@@ -3,10 +3,8 @@
 import { ethers } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import { abi, contractAddresses } from '@constants'
-import { Network } from 'ethers'
-import { BrowserProvider } from 'ethers'
-import { Signer } from 'ethers'
-import { AddressLike } from 'ethers'
+import { BrowserProvider, Signer } from 'ethers'
+import { Contract } from 'ethers'
 
 interface ContractAddresses {
     [chainId: number]: string[]
@@ -21,6 +19,7 @@ export default function Home() {
     let signer: Signer
     let chainId: bigint
     let contractAddress: string | undefined
+    let coinFlipContract: Contract | undefined
 
     const addressArray: ContractAddresses = contractAddresses
 
@@ -37,6 +36,9 @@ export default function Home() {
                 contractAddress = addressArray[Number(chainId)]
                     ? addressArray[Number(chainId)][0]
                     : undefined
+                coinFlipContract = contractAddress
+                    ? new ethers.Contract(contractAddress, abi, provider)
+                    : undefined
                 console.log(provider, signer, chainId, contractAddress)
             } catch (e) {
                 console.log(e)
@@ -51,7 +53,9 @@ export default function Home() {
         setWager(Number(value))
     }
 
-    const placeWager = (entrantsGuess: Number, entrantsWager: Number) => {}
+    const placeWager = (entrantsGuess: Number, entrantsWager: Number) => {
+        coinFlipContract?.enterWager()
+    }
 
     useEffect(() => {
         if (typeof window.ethereum !== 'undefined') {
